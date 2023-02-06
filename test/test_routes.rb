@@ -48,7 +48,7 @@ class TestToottown < Bridgetown::TestCase
         conn = Toottown::Models::MastodonConnection.new(instance_url: site.config.toottown.instance_url, access_token: site.config.toottown.access_token)
         url = "https://jaredwhite.com/videos/20230129/portland-vlog-birthday-fun-downtown-washington-park"
         hashtag = "vlog"
-        replies = conn.replies_of_tagged_status_with_link_url(url:, tagged: hashtag)
+        status, replies = conn.replies_of_tagged_status_with_link_url(url:, tagged: hashtag)
 
         assert_equal "<p>reply test (please ignore 🙃)</p>", replies.first.content
       end
@@ -61,17 +61,14 @@ class TestToottown < Bridgetown::TestCase
       assert_equal "https://indieweb.social/@jaredwhite", comment.account_url
       assert_equal "Jared White", comment.display_name
       assert_equal "https://cdn.masto.host/indiewebsocial/accounts/avatars/108/195/559/450/330/916/original/b5265e6aace48a28.jpeg", comment.avatar
-      assert_equal "February 4, 2023", comment.created_at
+      assert_equal "February 4, 2023 @ 2pm →", comment.created_at
       assert_equal "https://indieweb.social/@jaredwhite/109808869101409105", comment.url
-
-      assert_equal "<toottown-comment account-name=\"jaredwhite\" account-url=\"https://indieweb.social/@jaredwhite\" display-name=\"Jared White\" avatar=\"https://cdn.masto.host/indiewebsocial/accounts/avatars/108/195/559/450/330/916/original/b5265e6aace48a28.jpeg\" created-at=\"February 4, 2023\" href=\"https://indieweb.social/@jaredwhite/109808869101409105\"><p>reply test (please ignore 🙃)</p></toottown-comment>", comment.call
     end
   end
 
   describe "server routes" do
     it "works?" do
       app # initialize first
-      Toottown::Models::MastodonConnection::DEFAULT_HASHTAG = "vlog"
 
       get "/toottown/comments/count", url: "https://jaredwhite.com/videos/20230129/portland-vlog-birthday-fun-downtown-washington-park"
 
@@ -81,7 +78,19 @@ class TestToottown < Bridgetown::TestCase
       get "/toottown/comments", url: "https://jaredwhite.com/videos/20230129/portland-vlog-birthday-fun-downtown-washington-park"
 
       assert last_response.ok?
-      assert_equal "<toottown-comments><toottown-comment account-name=\"jaredwhite\" account-url=\"https://indieweb.social/@jaredwhite\" display-name=\"Jared White\" avatar=\"https://cdn.masto.host/indiewebsocial/accounts/avatars/108/195/559/450/330/916/original/b5265e6aace48a28.jpeg\" created-at=\"February 4, 2023\" href=\"https://indieweb.social/@jaredwhite/109808869101409105\"><p>reply test (please ignore 🙃)</p></toottown-comment><toottown-comment account-name=\"konnorrogers@ruby.social\" account-url=\"https://ruby.social/@konnorrogers\" display-name=\"Konnor Rogers\" avatar=\"https://cdn.masto.host/indiewebsocial/cache/accounts/avatars/109/292/491/979/538/244/original/972e900a7a0229e8.jpeg\" created-at=\"February 4, 2023\" href=\"https://ruby.social/@konnorrogers/109808929351487823\"><p><span class=\"h-card\"><a href=\"https://indieweb.social/@jaredwhite\" class=\"u-url mention\" rel=\"nofollow noopener noreferrer\" target=\"_blank\">@<span>jaredwhite</span></a></span> you can’t make me</p></toottown-comment><toottown-comment account-name=\"jaredwhite\" account-url=\"https://indieweb.social/@jaredwhite\" display-name=\"Jared White\" avatar=\"https://cdn.masto.host/indiewebsocial/accounts/avatars/108/195/559/450/330/916/original/b5265e6aace48a28.jpeg\" created-at=\"February 4, 2023\" href=\"https://indieweb.social/@jaredwhite/109808966748772949\"><p><span class=\"h-card\"><a href=\"https://ruby.social/@konnorrogers\" class=\"u-url mention\">@<span>konnorrogers</span></a></span> I may or may not be experimenting with the Mastodon API right about now… 🙈</p></toottown-comment></toottown-comments>", last_response.body
+      puts last_response.body
+
+      get "/toottown/comments/count", url: "https://jaredwhite.com/nothing"
+
+      assert last_response.ok?
+      assert_equal({ "count" => 0 }, JSON.parse(last_response.body))
+
+      get "/toottown/comments", url: "https://jaredwhite.com/nothing"
+
+      assert last_response.ok?
+      assert_equal "", last_response.body
+
+      # assert_equal "<toottown-comments><toottown-comment account-name=\"jaredwhite\" account-url=\"https://indieweb.social/@jaredwhite\" display-name=\"Jared White\" avatar=\"https://cdn.masto.host/indiewebsocial/accounts/avatars/108/195/559/450/330/916/original/b5265e6aace48a28.jpeg\" created-at=\"February 4, 2023\" href=\"https://indieweb.social/@jaredwhite/109808869101409105\"><p>reply test (please ignore 🙃)</p></toottown-comment><toottown-comment account-name=\"konnorrogers@ruby.social\" account-url=\"https://ruby.social/@konnorrogers\" display-name=\"Konnor Rogers\" avatar=\"https://cdn.masto.host/indiewebsocial/cache/accounts/avatars/109/292/491/979/538/244/original/972e900a7a0229e8.jpeg\" created-at=\"February 4, 2023\" href=\"https://ruby.social/@konnorrogers/109808929351487823\"><p><span class=\"h-card\"><a href=\"https://indieweb.social/@jaredwhite\" class=\"u-url mention\" rel=\"nofollow noopener noreferrer\" target=\"_blank\">@<span>jaredwhite</span></a></span> you can’t make me</p></toottown-comment><toottown-comment account-name=\"jaredwhite\" account-url=\"https://indieweb.social/@jaredwhite\" display-name=\"Jared White\" avatar=\"https://cdn.masto.host/indiewebsocial/accounts/avatars/108/195/559/450/330/916/original/b5265e6aace48a28.jpeg\" created-at=\"February 4, 2023\" href=\"https://indieweb.social/@jaredwhite/109808966748772949\"><p><span class=\"h-card\"><a href=\"https://ruby.social/@konnorrogers\" class=\"u-url mention\">@<span>konnorrogers</span></a></span> I may or may not be experimenting with the Mastodon API right about now… 🙈</p></toottown-comment></toottown-comments>", last_response.body
     end
   end
 end

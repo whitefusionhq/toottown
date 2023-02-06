@@ -4,10 +4,10 @@
   "main": "frontend/javascript/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/username/toottown.git"
+    "url": "https://github.com/whitefusionhq/toottown.git"
   },
-  "author": "Bridgetown Maintainers <maintainers@bridgetownrb.com>",
-  "homepage": "https://www.bridgetownrb.com",
+  "author": "Jared White <jared@whitefusion.studio>",
+  "homepage": "https://www.whitefusion.studio",
   "license": "MIT",
   "private": false,
   "files": [

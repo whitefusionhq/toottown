@@ -1,0 +1,49 @@
+:host {
+  --comment-margin-block: 2rem;
+  --header-gap: 1rem;
+  --avatar-size: 3rem;
+  --avatar-rounded: 100%;
+  --link-color: SlateBlue;
+  --header-link-color: var(--link-color);
+  --footer-font-size: 80%;
+  --paragraph-margin-inline: 0;
+  --paragraph-margin-block: 0.75em 1.25em;
+
+  display: block;
+  margin-block: var(--comment-margin-block);
+}
+
+a {
+  text-decoration: none;
+  color: var(--link-color);
+}
+
+p {
+  margin-inline: var(--paragraph-margin-inline);
+  margin-block: var(--paragraph-margin-block);
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: var(--header-gap);
+}
+
+header > a {
+  display: contents;
+  color: var(--header-link-color);
+}
+
+header :is(h4, p) {
+  margin: 0;
+}
+
+img[part~="avatar"] {
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  border-radius: var(--avatar-rounded);
+}
+
+footer {
+  font-size: 85%;
+}

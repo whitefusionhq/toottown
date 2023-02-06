@@ -1,10 +1,10 @@
-# Sample plugin for Bridgetown
+# TootTown
 
-_NOTE: This isn't a real plugin! Copy this sample code and use it to create your own Ruby gem! [Help guide here…](https://www.bridgetownrb.com/docs/plugins)_ 😃
+Bring comments into your [Bridgetown](https://www.bridgetownrb.com) site via Mastodon and the Fediverse!
 
-_You can run_ `bridgetown plugins new` _to easily set up a customized version of this starter repo._
+**UNDER DEVELOPMENT**
 
-A Bridgetown plugin to [fill in the blank]…
+----
 
 ## Installation
 

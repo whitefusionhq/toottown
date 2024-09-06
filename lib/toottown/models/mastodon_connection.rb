@@ -1,6 +1,8 @@
 module Toottown
   module Models
     class MastodonConnection
+      using Bridgetown::Refinements
+
       attr_reader :connection
 
       def initialize(instance_url:, access_token:)
@@ -16,9 +18,9 @@ module Toottown
       def get(path, **params)
         response = connection.get(path, **params)
         if response.body.is_a?(Array)
-          response.body.map(&:with_dot_access)
+          response.body.map(&:as_dots)
         else
-          response.body.with_dot_access
+          response.body.as_dots
         end
       end
 
